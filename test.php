@@ -29,9 +29,6 @@
         function build ($string_name, $generate_array) {
             $generate = implode(PHP_EOL, $generate_array);
 
-            echo TXT_FILE;
-            die();
-
             $ahk_build = "
 {$string_name}:=[]
 
