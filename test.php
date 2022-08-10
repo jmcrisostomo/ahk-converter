@@ -6,28 +6,67 @@
     date_default_timezone_set("Asia/Manila");
 
     define('TXT_FILE', 'pg20228.txt');
+    define('INPUT_DIR', 'txt');
+    define('OUTPUT_DIR', 'outputs');
 
-    class Convert {
+    class Convert 
+    {
         // properties
         public $ahk_string_name;
-        public $array_test;
+        public $array_txt;
+        public $array_ahk;
+        public $date_today;
         
-        function __construct () {
-            $this->ahk_string_name = "HelloWorld";
-            $this->array_test = [];
+        function __construct () 
+        {
+            $this->ahk_string_name  = "HelloWorld";
+            $this->date_today       = date('Y_m_d_His');
+            $this->array_txt        = array();
+            $this->array_ahk        = array();
         }
 
-        function init () {
-            $this->convert();
-            echo $this->build($this->ahk_string_name, $this->array_test);
+        function init () 
+        {
+            echo $this->convert();
         }
 
-        function convert () {
-            $this->array_test = ['Foo', 'Bar', 'Bazz'];
+        function convert () 
+        {
+            // store stream to array
+            $input_file = file( INPUT_DIR."/".TXT_FILE, FILE_IGNORE_NEW_LINES ) or die ("file is missing.");
+            foreach($input_file as $line) 
+            {
+                $this->array_txt[] = $line;
+            }
+
+            // generate string
+            $counter = 1;
+            foreach ($this->array_txt as $index => $line) 
+            {
+                if (!empty($line) == TRUE)
+                {
+                    // double quote fix
+                    $line = str_replace('"', '""', $line);
+
+                    $build = $this->ahk_string_name.'['.$counter.'] := "'.$line.'"'.PHP_EOL;
+                    $build = str_replace("“",'""',$build);
+                    $build = str_replace("”", '""',$build);
+                    $build = str_replace("’", "'",$build);
+                    $build = str_replace("–", '-',$build);
+                    $build = str_replace("!", '{!}',$build);
+
+                    $this->array_ahk[] = $build;
+
+                    $counter += 1;
+                }
+            }
+
+            return $this->build_output($this->ahk_string_name, $this->array_ahk);
         }
      
-        function build ($string_name, $generate_array) {
-            $generate = implode(PHP_EOL, $generate_array);
+        function build_output ($string_name, $generate_array) 
+        {
+            $generate = implode('', $generate_array);
 
             $ahk_build = "
 {$string_name}:=[]
@@ -96,6 +135,12 @@ deleteChat:
     }
 Return
             ";
+
+            // generarrte ahk file
+            $ahk_txt_file = fopen( OUTPUT_DIR."/".$this->ahk_string_name."-".$this->date_today.".ahk", "w" ) or die("Unable to open file!");
+            fwrite($ahk_txt_file, $ahk_build);
+            fclose($ahk_txt_file);
+
             return $ahk_build;
         } 
         
