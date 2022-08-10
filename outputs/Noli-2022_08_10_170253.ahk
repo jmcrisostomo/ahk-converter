@@ -2,7 +2,7 @@
 HelloWorld:=[]
 
 ;Generates loop here
-HelloWorld[1] := "﻿Title: Noli Me Tangere"
+HelloWorld[1] := "Title: Noli Me Tangere"
 HelloWorld[2] := "Author: Jose Rizal"
 HelloWorld[3] := "Translator: Pascual H. Poblete"
 HelloWorld[4] := "Release Date: December 30, 2006 [EBook #20228]"
@@ -18788,7 +18788,7 @@ Return
 
 F4::
     If (toggle := !toggle) {
-        Send, y
+        Send, {U+E0}
         SetTimer, spamBot, 50
     }
     Else {
@@ -18811,6 +18811,7 @@ spamBot:
     }
     
     Sleep, 3000
+    SetKeyDelay, 100
     Send, {Up}
     Send, ^a
     Send, {BS}
