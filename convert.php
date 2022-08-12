@@ -1,4 +1,11 @@
 <?php
+    // namespace AhkConverter\Core; 
+
+    // use AhkConverter\Filtering\AccentFilter;
+
+    // $test_namespace = new AccentFilter();
+    // echo $test_namespace->hello();
+    // die();
     /**
     * String Manipulation and Builder for AHK
     * Created by JM Crisostomo
@@ -8,6 +15,8 @@
     define('TXT_FILE', 'pg20228.txt');
     define('INPUT_DIR', 'txt');
     define('OUTPUT_DIR', 'outputs');
+
+
 
     class Convert 
     {
@@ -54,7 +63,7 @@
                     $build = str_replace("’", "'",$build);
                     $build = str_replace("–", '-',$build);
                     $build = str_replace("!", '{!}',$build);
-
+                    $build = $this->accent_filter($build);
                     $this->array_ahk[] = $build;
 
                     $counter += 1;
@@ -64,6 +73,21 @@
             return $this->build_output($this->ahk_string_name, $this->array_ahk);
         }
      
+        function accent_filter ($str = NULL) 
+        {
+            $reg = '/[\x80-\xFF]/';
+            $u_hex = NULL;
+            $filter_extended_ascii = preg_match_all($reg, $str, $matches, PREG_SET_ORDER, 0);
+            foreach ($matches as $key => $object)
+            {
+                foreach ($object as $key => $ascii) 
+                {
+                    $u_hex = "{U+".strtoupper(dechex(mb_ord($ascii, 'ISO-8859-1')))."}";
+                }
+            }
+            return $u_hex;
+        }
+
         function build_output ($string_name, $generate_array) 
         {
             $generate = implode('', $generate_array);

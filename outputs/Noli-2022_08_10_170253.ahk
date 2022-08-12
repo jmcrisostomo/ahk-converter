@@ -18788,7 +18788,7 @@ Return
 
 F4::
     If (toggle := !toggle) {
-        Send, {U+E0}
+        Send, y
         SetTimer, spamBot, 50
     }
     Else {
