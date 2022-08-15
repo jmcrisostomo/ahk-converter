@@ -28,7 +28,7 @@
         
         function __construct () 
         {
-            $this->ahk_string_name  = "HelloWorld";
+            $this->ahk_string_name  = "Noli";
             $this->date_today       = date('Y_m_d_His');
             $this->array_txt        = array();
             $this->array_ahk        = array();
@@ -63,26 +63,30 @@
                     $build = str_replace("’", "'",$build);
                     $build = str_replace("–", '-',$build);
                     $build = str_replace("!", '{!}',$build);
+
+                    // echo json_encode($this->accent_filter($build));
                     $build = $this->accent_filter($build);
+
+
                     $this->array_ahk[] = $build;
 
                     $counter += 1;
                 }
             }
-
+            die();
             return $this->build_output($this->ahk_string_name, $this->array_ahk);
         }
      
         function accent_filter ($str = NULL) 
         {
             $reg = '/[\x80-\xFF]/';
-            $u_hex = NULL;
+            $u_hex = array();
             $filter_extended_ascii = preg_match_all($reg, $str, $matches, PREG_SET_ORDER, 0);
             foreach ($matches as $key => $object)
             {
                 foreach ($object as $key => $ascii) 
                 {
-                    $u_hex = "{U+".strtoupper(dechex(mb_ord($ascii, 'ISO-8859-1')))."}";
+                    $u_hex[] = "{U+".strtoupper(dechex(ord($ascii)))."}";
                 }
             }
             return $u_hex;
