@@ -63,33 +63,50 @@
                     $build = str_replace("’", "'",$build);
                     $build = str_replace("–", '-',$build);
                     $build = str_replace("!", '{!}',$build);
-
-                    // echo json_encode($this->accent_filter($build));
                     $build = $this->accent_filter($build);
 
+                    // print_r($build);
 
                     $this->array_ahk[] = $build;
-
                     $counter += 1;
                 }
             }
-            die();
+            // die();
             return $this->build_output($this->ahk_string_name, $this->array_ahk);
         }
      
         function accent_filter ($str = NULL) 
         {
-            $reg = '/[\x80-\xFF]/';
-            $u_hex = array();
-            $filter_extended_ascii = preg_match_all($reg, $str, $matches, PREG_SET_ORDER, 0);
-            foreach ($matches as $key => $object)
+            $regexp = '/\\\u00[0-9a-fA-F][0-9a-fA-F]/';
+            $stanza = json_encode($str);
+
+            $arr_json = [];
+
+            if (preg_match_all($regexp, $stanza, $matches))
             {
-                foreach ($object as $key => $ascii) 
+                $temp = $matches[0];
+
+                for ($i = 0; $i < count($temp); $i++) 
+                { 
+                    if ($arr_json == NULL || in_array($temp[$i], $arr_json) == FALSE)
+                    {
+                        $arr_json[] = $temp[$i];
+                    }
+                }
+
+                if ($arr_json) 
                 {
-                    $u_hex[] = "{U+".strtoupper(dechex(ord($ascii)))."}";
+                    foreach ($arr_json as $value) 
+                    {
+                        // strip string
+                        $strip = strtoupper( substr($value, -4, 4) );
+                        $ahk_format = '{U+'. $strip .'}';
+                        $stanza = str_replace($value, $ahk_format, $stanza);
+                    }
                 }
             }
-            return $u_hex;
+            $stanza = json_decode($stanza);
+            return $stanza;
         }
 
         function build_output ($string_name, $generate_array) 
