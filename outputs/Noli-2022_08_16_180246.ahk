@@ -18800,7 +18800,7 @@ Return
 spamBot:
 
     Send, % Noli[ Counter ]
-    SetKeyDelay, 5000
+    SetKeyDelay, 2000
     ; SetKeyDelay, 600
     Send, {Enter}
 
@@ -18812,19 +18812,29 @@ spamBot:
     Counter := 1
     }
     
-    If ( DeleteCout = 5 ){
-        Loop, 10
-        {
-            send, {Up}
-            send, ^a
-            send, {BS}
-            send, {Enter}
-            send, {Enter}
-            sleep, 500
-            send, {WheelUp}
-        }
-        DeleteCout := 1
-    }
+    Sleep, 3000
+    SetKeyDelay, 100
+    Send, {Up}
+    Send, ^a
+    Send, {BS}
+    Send, {Enter}
+    Send, {Enter}
+    Sleep, 500
+    Send, {WheelUp}
+
+    ; If ( DeleteCout = 5 ){
+    ;     Loop, 10
+    ;     {
+    ;         send, {Up}
+    ;         send, ^a
+    ;         send, {BS}
+    ;         send, {Enter}
+    ;         send, {Enter}
+    ;         sleep, 500
+    ;         send, {WheelUp}
+    ;     }
+    ;     DeleteCout := 1
+    ; }
 Return
 
 deleteChat:
